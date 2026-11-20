@@ -60,6 +60,18 @@ warning: `find` returns a canned value; verify it does what its doc claims rathe
 LL |     fn find(&self, key: &str) -> Option<String> {
    |        ^^^^
 
+warning: the body of `wake` is only `todo!()`: wire up a real implementation before use
+  --> $DIR/stub_body.rs:103:4
+   |
+LL | fn wake(id: u32) -> Result<(), String> {
+   |    ^^^^
+
+warning: the body of `drain` is only `unimplemented!()`: wire up a real implementation before use
+  --> $DIR/stub_body.rs:108:4
+   |
+LL | fn drain(id: u32) -> Result<(), String> {
+   |    ^^^^^
+
 warning: `status` returns a canned value; verify it does what its doc claims rather than standing in as a stub
   --> $DIR/stub_body.rs:138:8
    |
@@ -90,5 +102,35 @@ warning: `flush_queue` has an empty body but its doc describes behavior: impleme
 LL | fn flush_queue() {
    |    ^^^^^^^^^^^
 
-warning: 15 warnings emitted
+warning: the body of `parse_header` is only `todo!("parse the header")`: wire up a real implementation before use
+  --> $DIR/stub_body.rs:197:4
+   |
+LL | fn parse_header(input: &str) -> u32 {
+   |    ^^^^^^^^^^^^
+
+warning: the body of `rotate` is only `unimplemented!("key rotation")`: wire up a real implementation before use
+  --> $DIR/stub_body.rs:201:4
+   |
+LL | fn rotate(key: u32) {
+   |    ^^^^^^
+
+warning: the body of `start` is only `todo!()`: wire up a real implementation before use
+  --> $DIR/stub_body.rs:224:8
+   |
+LL |     fn start(&self) {
+   |        ^^^^^
+
+warning: the body of `stop` is only `todo!()`: wire up a real implementation before use
+  --> $DIR/stub_body.rs:231:8
+   |
+LL |     fn stop(&self) {
+   |        ^^^^
+
+warning: the body of `multiline` is only `todo!()`: wire up a real implementation before use
+  --> $DIR/stub_body.rs:246:4
+   |
+LL | fn multiline() -> u32 {
+   |    ^^^^^^^^^
+
+warning: 22 warnings emitted
 

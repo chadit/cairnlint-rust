@@ -99,12 +99,12 @@ fn page_limit() -> usize {
     DEFAULT_LIMIT
 }
 
-/// Wakes the scheduler. Left to clippy's `todo` lint.
+/// Wakes the scheduler.
 fn wake(id: u32) -> Result<(), String> {
     todo!()
 }
 
-/// Drains the queue. Left to clippy's `unimplemented` lint.
+/// Drains the queue.
 fn drain(id: u32) -> Result<(), String> {
     unimplemented!()
 }
@@ -192,6 +192,62 @@ impl Drop for Quiet {
 /// Flushes the queue to disk.
 fn flush_queue() {
     return;
+}
+
+fn parse_header(input: &str) -> u32 {
+    todo!("parse the header")
+}
+
+fn rotate(key: u32) {
+    unimplemented!("key rotation");
+}
+
+/// Routes `path`, giving up on anything but the root.
+fn route(path: &str) -> u32 {
+    if path.is_empty() {
+        return 0;
+    }
+    todo!()
+}
+
+/// Stops the worker. Other panics stay with Clippy.
+fn halt(code: i32) -> u32 {
+    unreachable!()
+}
+
+fn abort_now() -> u32 {
+    panic!("not implemented")
+}
+
+trait Plugin {
+    /// Starts the plugin. The default does nothing.
+    fn start(&self) {
+        todo!()
+    }
+
+    /// Pauses the plugin. The default does nothing.
+    fn pause(&self) {}
+
+    fn stop(&self) {
+        todo!()
+    }
+}
+
+macro_rules! generated_placeholder {
+    () => {
+        fn generated_todo() -> u32 {
+            todo!()
+        }
+    };
+}
+
+generated_placeholder!();
+
+fn multiline() -> u32 {
+    todo!(
+        "a long message that spans
+         two lines"
+    )
 }
 
 fn main() {}

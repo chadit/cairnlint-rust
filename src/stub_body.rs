@@ -1,6 +1,9 @@
 //! `agent_stub_body` flags a function whose body does nothing its name or doc
-//! comment claims. It reports four shapes:
+//! comment claims. It reports five shapes:
 //!
+//! - a body that is only `todo!()` or `unimplemented!()`, with or without a
+//!   message, because Clippy's `todo` and `unimplemented` lints sit in the
+//!   restriction group, which is off by default;
 //! - an empty body under a doc comment that describes behavior;
 //! - a lone `Err(..)` whose text or variant reads like an unfinished stub, such
 //!   as `Err("not implemented".into())` or `Err(Error::NotImplemented)`;
@@ -9,12 +12,17 @@
 //! - a lone canned value (`None`, `0`, `Default::default()`, `Vec::new()`)
 //!   under a doc comment.
 //!
-//! A body that only panics is left to clippy's `todo` and `unimplemented`.
-//! Not reported: test code, macro output, required trait methods (no body), an
-//! empty body whose doc calls it a no-op, a trait default method whose doc does
-//! the same, an undocumented method without parameters (a null object such as
-//! a `Drop` or `flush` that has nothing to do), and a constructor that returns
-//! `Self::default()`.
+//! A body that panics any other way, such as `panic!` or `unreachable!`, is
+//! left to Clippy, because that panic often marks a real invariant rather than
+//! unfinished work.
+//!
+//! Never reported: test code, macro output, and required trait methods (no
+//! body). The other shapes are also not reported for an empty body whose doc
+//! calls it a no-op, a trait default method whose doc does the same, an
+//! undocumented method without parameters (a null object such as a `Drop` or
+//! `flush` that has nothing to do), or a constructor that returns
+//! `Self::default()`. A `todo!()` or `unimplemented!()` body gets none of these
+//! exemptions, because calling it panics whatever its doc says.
 //!
 //! Known problems: a sink or null-object method that takes parameters, such as
 //! `fmt::Write::write_str` on a type that discards output, is reported.
@@ -22,6 +30,7 @@
 use std::ops::ControlFlow;
 
 use clippy_utils::diagnostics::span_lint_hir;
+use clippy_utils::macros::root_macro_call;
 use clippy_utils::res::{MaybeDef, MaybeQPath, MaybeResPath};
 use clippy_utils::source::snippet_opt;
 use clippy_utils::visitors::for_each_expr;
@@ -34,15 +43,16 @@ use rustc_hir::{Block, Body, Expr, ExprKind, FnDecl, HirId, Node};
 use rustc_lint::{LateContext, LateLintPass, declare_lint, declare_lint_pass};
 use rustc_middle::ty::Ty;
 use rustc_span::def_id::LocalDefId;
-use rustc_span::{Span, sym};
+use rustc_span::{Span, Symbol, sym};
 
 use crate::block::sole_expr;
 use crate::test_code::is_test_code;
 
 declare_lint! {
     /// Flags a function whose body does nothing its name or doc comment
-    /// claims: an empty body under a doc, a "not implemented" error, or a lone
-    /// canned return. See the module documentation for the exemptions.
+    /// claims: a `todo!()` or `unimplemented!()` body, an empty body under a
+    /// doc, a "not implemented" error, or a lone canned return. See the module
+    /// documentation for the exemptions.
     pub(crate) AGENT_STUB_BODY,
     Warn,
     "function body does nothing its name or doc comment claims"
@@ -58,6 +68,7 @@ struct Claims {
     has_params: bool,
 }
 
+#[derive(Clone, Copy)]
 enum BodyShape<'tcx> {
     Empty,
     SoleReturn(&'tcx Expr<'tcx>),
@@ -81,32 +92,57 @@ impl<'tcx> LateLintPass<'tcx> for StubBody {
         if is_test_code(cx, hir_id) {
             return;
         }
-        let doc = doc_text(cx, hir_id);
-        if is_noop_trait_default(cx, def_id, &doc) {
-            return;
-        }
         let Some(block) = fn_block(cx, body) else {
             return;
         };
-        let claims = Claims {
-            has_doc: !doc.trim().is_empty(),
-            has_params: decl.inputs.len() > usize::from(decl.implicit_self().has_implicit_self()),
-        };
         let name = cx.tcx.item_name(def_id.to_def_id());
-        let message = match body_shape(block) {
-            BodyShape::Empty if claims.has_doc && !mentions_noop(&doc) => Some(format!(
-                "`{name}` has an empty body but its doc describes behavior: implement it or drop the claim"
-            )),
-            BodyShape::SoleReturn(returned) => {
-                sole_return_message(cx, def_id, returned, &claims, name)
+        let shape = body_shape(block);
+        let message = placeholder_message(cx, shape, name).or_else(|| {
+            let doc = doc_text(cx, hir_id);
+            if is_noop_trait_default(cx, def_id, &doc) {
+                return None;
             }
-            BodyShape::Empty | BodyShape::Working => None,
-        };
+            let claims = Claims {
+                has_doc: !doc.trim().is_empty(),
+                has_params: decl.inputs.len()
+                    > usize::from(decl.implicit_self().has_implicit_self()),
+            };
+            match shape {
+                BodyShape::Empty if claims.has_doc && !mentions_noop(&doc) => Some(format!(
+                    "`{name}` has an empty body but its doc describes behavior: implement it or drop the claim"
+                )),
+                BodyShape::SoleReturn(returned) => {
+                    sole_return_message(cx, def_id, returned, &claims, name)
+                }
+                BodyShape::Empty | BodyShape::Working => None,
+            }
+        });
         if let Some(message) = message {
             let ident_span = cx.tcx.def_ident_span(def_id).unwrap_or(span);
             span_lint_hir(cx, AGENT_STUB_BODY, hir_id, ident_span, message);
         }
     }
+}
+
+fn placeholder_message(cx: &LateContext<'_>, shape: BodyShape<'_>, name: Symbol) -> Option<String> {
+    let BodyShape::SoleReturn(returned) = shape else {
+        return None;
+    };
+    let call = root_macro_call(returned.span)?;
+    if !matches!(
+        cx.tcx.get_diagnostic_name(call.def_id),
+        Some(sym::todo_macro | sym::unimplemented_macro)
+    ) {
+        return None;
+    }
+    // A call spread over several lines would split the warning's headline, so
+    // it shows as the bare macro instead.
+    let text = snippet_opt(cx, call.span)
+        .filter(|text| !text.contains('\n'))
+        .unwrap_or_else(|| format!("{}!()", cx.tcx.item_name(call.def_id)));
+    Some(format!(
+        "the body of `{name}` is only `{text}`: wire up a real implementation before use"
+    ))
 }
 
 fn sole_return_message<'tcx>(

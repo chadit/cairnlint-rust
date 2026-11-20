@@ -40,6 +40,10 @@ fn production() -> [String; 2] {
 mod tests {
     use super::*;
 
+    fn pending(id: u32) -> u32 {
+        todo!()
+    }
+
     struct FakeStore;
 
     impl Storer for FakeStore {
