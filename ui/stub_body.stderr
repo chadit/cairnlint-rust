@@ -1,0 +1,94 @@
+warning: `validate_config` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:17:4
+   |
+LL | fn validate_config(config: &str) -> Result<(), StoreError> {
+   |    ^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(agent_stub_body)]` on by default
+
+warning: `load_user` returns a `"not implemented".to_string()` stub: wire up a real implementation before use
+  --> $DIR/stub_body.rs:22:4
+   |
+LL | fn load_user(id: u32) -> Result<String, String> {
+   |    ^^^^^^^^^
+
+warning: `flush` has an empty body but its doc describes behavior: implement it or drop the claim
+  --> $DIR/stub_body.rs:27:4
+   |
+LL | fn flush() {}
+   |    ^^^^^
+
+warning: `buffer_size` returns a canned value; verify it does what its doc claims rather than standing in as a stub
+  --> $DIR/stub_body.rs:30:4
+   |
+LL | fn buffer_size() -> usize {
+   |    ^^^^^^^^^^^
+
+warning: `setup` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:35:4
+   |
+LL | fn setup() -> Result<(), String> {
+   |    ^^^^^
+
+warning: `fetch` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:40:10
+   |
+LL | async fn fetch(url: &str) -> Result<String, String> {
+   |          ^^^^^
+
+warning: `open` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:44:4
+   |
+LL | fn open(path: &str) -> Result<u32, StoreError> {
+   |    ^^^^
+
+warning: `save` returns a `StoreError::NotImplemented` stub: wire up a real implementation before use
+  --> $DIR/stub_body.rs:50:8
+   |
+LL |     fn save(&self) -> Result<(), StoreError> {
+   |        ^^^^
+
+warning: `keys` returns a canned value; verify it does what its doc claims rather than standing in as a stub
+  --> $DIR/stub_body.rs:55:8
+   |
+LL |     fn keys(&self) -> Vec<String> {
+   |        ^^^^
+
+warning: `find` returns a canned value; verify it does what its doc claims rather than standing in as a stub
+  --> $DIR/stub_body.rs:60:8
+   |
+LL |     fn find(&self, key: &str) -> Option<String> {
+   |        ^^^^
+
+warning: `status` returns a canned value; verify it does what its doc claims rather than standing in as a stub
+  --> $DIR/stub_body.rs:138:8
+   |
+LL |     fn status(&self) -> Option<String> {
+   |        ^^^^^^
+
+warning: `connect` returns a `io::Error::new(io::ErrorKind::Other, "not implemented")` stub: wire up a real implementation before use
+  --> $DIR/stub_body.rs:168:4
+   |
+LL | fn connect(port: u16) -> io::Result<()> {
+   |    ^^^^^^^
+
+warning: `send_report` returns a `format!("not implemented")` stub: wire up a real implementation before use
+  --> $DIR/stub_body.rs:173:4
+   |
+LL | fn send_report(id: u32) -> Result<(), String> {
+   |    ^^^^^^^^^^^
+
+warning: `write_record` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:178:4
+   |
+LL | fn write_record(id: u32) -> io::Result<()> {
+   |    ^^^^^^^^^^^^
+
+warning: `flush_queue` has an empty body but its doc describes behavior: implement it or drop the claim
+  --> $DIR/stub_body.rs:193:4
+   |
+LL | fn flush_queue() {
+   |    ^^^^^^^^^^^
+
+warning: 15 warnings emitted
+

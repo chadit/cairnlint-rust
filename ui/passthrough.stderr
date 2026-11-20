@@ -1,0 +1,58 @@
+warning: type `Wrapper` wraps one field and every one of its 2 methods forwards; callers can hold the wrapped value directly
+  --> $DIR/passthrough.rs:20:8
+   |
+LL | struct Wrapper {
+   |        ^^^^^^^
+   |
+   = note: `#[warn(agent_passthrough)]` on by default
+
+warning: type `Newtype` wraps one field and its only method forwards; callers can hold the wrapped value directly
+  --> $DIR/passthrough.rs:48:8
+   |
+LL | struct Newtype(Inner);
+   |        ^^^^^^^
+
+warning: type `Bag` wraps one field and its only method forwards; callers can hold the wrapped value directly
+  --> $DIR/passthrough.rs:56:8
+   |
+LL | struct Bag {
+   |        ^^^
+
+warning: method `Mixed::join` only forwards its arguments to `self.inner.join` and adds no behavior of its own
+  --> $DIR/passthrough.rs:72:8
+   |
+LL |     fn join(&self, parts: &[String]) -> String {
+   |        ^^^^
+
+warning: method `Pair::join_left` only forwards its arguments to `self.left.join` and adds no behavior of its own
+  --> $DIR/passthrough.rs:88:8
+   |
+LL |     fn join_left(&self, parts: &[String]) -> String {
+   |        ^^^^^^^^^
+
+warning: method `Mac::first` only forwards its arguments to `self.inner.first` and adds no behavior of its own
+  --> $DIR/passthrough.rs:167:8
+   |
+LL |     fn first(&self) -> Option<&u8> {
+   |        ^^^^^
+
+warning: method `Boxed::len` only forwards its arguments to `self.inner.len` and adds no behavior of its own
+  --> $DIR/passthrough.rs:177:8
+   |
+LL |     fn len(&self) -> usize {
+   |        ^^^
+
+warning: type `Returning` wraps one field and its only method forwards; callers can hold the wrapped value directly
+  --> $DIR/passthrough.rs:186:8
+   |
+LL | struct Returning {
+   |        ^^^^^^^^^
+
+warning: method `Nested::join` only forwards its arguments to `self.outer.inner.join` and adds no behavior of its own
+  --> $DIR/passthrough.rs:202:8
+   |
+LL |     fn join(&self, parts: &[String]) -> String {
+   |        ^^^^
+
+warning: 9 warnings emitted
+

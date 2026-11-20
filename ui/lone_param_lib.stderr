@@ -1,0 +1,10 @@
+warning: parameter `strict` of `private` receives `true` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param_lib.rs:12:28
+   |
+LL | fn private(template: &str, strict: bool) -> String {
+   |                            ^^^^^^
+   |
+   = note: `#[warn(agent_lone_param)]` on by default
+
+warning: 1 warning emitted
+

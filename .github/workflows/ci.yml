@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Installs the nightly rust-toolchain.toml pins; its component list omits
+      # clippy and rustfmt.
+      - run: rustup toolchain install && rustup component add clippy rustfmt
+      # The UI tests link through dylint-link. It installs outside the checkout
+      # so the repo's linker setting doesn't point at the tool being built, and
+      # it floats because the runner discards it with the job.
+      - run: cargo install --locked dylint-link
+        working-directory: ${{ runner.temp }}
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test

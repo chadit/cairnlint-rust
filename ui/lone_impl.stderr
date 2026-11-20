@@ -1,0 +1,22 @@
+warning: trait `Storer` has exactly one implementing type in this compilation (`FileStore`); using `FileStore` directly removes the trait and the indirection at its uses
+  --> $DIR/lone_impl.rs:9:7
+   |
+LL | trait Storer {
+   |       ^^^^^^
+   |
+   = note: `#[warn(agent_lone_impl)]` on by default
+
+warning: trait `Slot` has exactly one implementing type in this compilation (`FileStore`); using `FileStore` directly removes the trait and the indirection at its uses
+  --> $DIR/lone_impl.rs:19:7
+   |
+LL | trait Slot<T> {
+   |       ^^^^
+
+warning: trait `Clock` has exactly one implementing type in this compilation (`SystemClock`); using `SystemClock` directly removes the trait and the indirection at its uses
+  --> $DIR/lone_impl.rs:125:7
+   |
+LL | trait Clock {
+   |       ^^^^^
+
+warning: 3 warnings emitted
+

@@ -1,0 +1,10 @@
+warning: trait `Clock` has exactly one implementing type in this compilation (`SystemClock`) and no test double; using `SystemClock` directly removes the trait and the indirection at its uses
+  --> $DIR/test_build.rs:15:7
+   |
+LL | trait Clock {
+   |       ^^^^^
+   |
+   = note: `#[warn(agent_lone_impl)]` on by default
+
+warning: 1 warning emitted
+

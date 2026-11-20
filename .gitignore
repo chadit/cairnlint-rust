@@ -1,0 +1,6 @@
+/target
+
+# The global gitignore excludes /.github/, which would silently drop the CI
+# workflow: it would exist on disk, never be committed, and never run on
+# GitHub. Re-including it keeps the workflow under version control.
+!/.github/

@@ -1,0 +1,21 @@
+[package]
+name = "cairnlint_rust"
+version = "0.1.0"
+description = "Agent-tier heuristic lints for Rust, loaded through Dylint"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+clippy_utils = { git = "https://github.com/rust-lang/rust-clippy", rev = "2dd71153b54873bce06a89b65653f346fb528d13" }
+dylint_linting = "=6.4.0"
+
+[dev-dependencies]
+dylint_testing = "=6.4.0"
+
+[workspace]
+
+[package.metadata.rust-analyzer]
+rustc_private = true

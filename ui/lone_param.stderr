@@ -1,0 +1,40 @@
+warning: parameter `strict` of `render` receives `true` at all 3 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param.rs:10:27
+   |
+LL | fn render(template: &str, strict: bool) -> String {
+   |                           ^^^^^^
+   |
+   = note: `#[warn(agent_lone_param)]` on by default
+
+warning: parameter `limit` of `take` receives `PAGE_SIZE` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param.rs:38:23
+   |
+LL | fn take(items: &[u8], limit: usize) -> &[u8] {
+   |                       ^^^^^
+
+warning: parameter `mode` of `run` receives `Mode::Strict` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param.rs:42:8
+   |
+LL | fn run(mode: Mode, retries: u32) -> u32 {
+   |        ^^^^
+
+warning: parameter `fallback` of `lookup` receives `None` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param.rs:49:22
+   |
+LL | fn lookup(key: &str, fallback: Option<u32>) -> Option<u32> {
+   |                      ^^^^^^^^
+
+warning: parameter `bold` of `draw` receives `true` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param.rs:62:32
+   |
+LL |     fn draw(&self, width: u32, bold: bool) -> u32 {
+   |                                ^^^^
+
+warning: parameter `flag` of `place` receives `true` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param.rs:144:30
+   |
+LL | fn place((x, y): (u32, u32), flag: bool) -> u32 {
+   |                              ^^^^
+
+warning: 6 warnings emitted
+
