@@ -6,5 +6,35 @@ LL | trait Clock {
    |
    = note: `#[warn(agent_lone_impl)]` on by default
 
-warning: 1 warning emitted
+warning: the body of `not_written_yet_twin` is only `todo!()`: wire up a real implementation before use
+  --> $DIR/test_build.rs:44:4
+   |
+LL | fn not_written_yet_twin() {
+   |    ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(agent_stub_body)]` on by default
+
+warning: `fixture` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/test_build.rs:54:4
+   |
+LL | fn fixture(id: u32) -> Result<(), String> {
+   |    ^^^^^^^
+
+warning: type `Holder` wraps one field and its only method forwards; callers can hold the wrapped value directly
+  --> $DIR/test_build.rs:66:8
+   |
+LL | struct Holder {
+   |        ^^^^^^
+   |
+   = note: `#[warn(agent_passthrough)]` on by default
+
+warning: parameter `strict` of `label` receives `true` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/test_build.rs:58:22
+   |
+LL | fn label(name: &str, strict: bool) -> String {
+   |                      ^^^^^^
+   |
+   = note: `#[warn(agent_lone_param)]` on by default
+
+warning: 5 warnings emitted
 

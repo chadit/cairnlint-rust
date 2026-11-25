@@ -1,0 +1,11 @@
+# Input for the eval in tests/eval.rs, built only by that eval. It has a lib
+# and a bin so the eval covers both target kinds.
+[package]
+name = "cairnlint_eval"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+# An empty table makes this crate its own workspace instead of an unlisted
+# member of the library's.
+[workspace]

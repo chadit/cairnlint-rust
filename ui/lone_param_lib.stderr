@@ -6,5 +6,11 @@ LL | fn private(template: &str, strict: bool) -> String {
    |
    = note: `#[warn(agent_lone_param)]` on by default
 
-warning: 1 warning emitted
+warning: parameter `strict` of `crate_only` receives `true` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param_lib.rs:29:42
+   |
+LL | pub(crate) fn crate_only(template: &str, strict: bool) -> String {
+   |                                          ^^^^^^
+
+warning: 2 warnings emitted
 

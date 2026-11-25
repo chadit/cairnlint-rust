@@ -251,3 +251,90 @@ fn multiline() -> u32 {
 }
 
 fn main() {}
+
+/// Imports the rows in `path`.
+fn import(path: &str) -> Result<(), String> {
+    Err("not_implemented".into())
+}
+
+/// Saves the draft for `id`.
+fn save_draft(id: u32) -> Result<(), String> {
+    Err("TODO: implement save".into())
+}
+
+/// Archives the record for `id`.
+fn archive(id: u32) -> Result<(), String> {
+    Err("to-do".into())
+}
+
+/// Restores the backup for `id`.
+fn restore(id: u32) -> Result<(), String> {
+    Err("FIXME".into())
+}
+
+/// Signs the payload for `id`.
+fn sign(id: u32) -> Result<(), String> {
+    Err("stub".into())
+}
+
+/// Renders the preview for `id`.
+fn preview(id: u32) -> Result<String, String> {
+    Err("placeholder value".into())
+}
+
+/// Compacts the log for `id`.
+fn compact(id: u32) -> Result<(), String> {
+    Err("unimplemented".into())
+}
+
+#[derive(Debug)]
+enum SyncError {
+    Implemented,
+}
+
+// The error texts below share letters or words with the stub vocabulary but
+// do not say the work is missing, so each gets the canned-result warning
+// rather than the stub one.
+
+/// Syncs the replica for `id`.
+fn sync(id: u32) -> Result<(), SyncError> {
+    Err(SyncError::Implemented)
+}
+
+/// Rejects the amount in `value`.
+fn reject(value: i32) -> Result<(), String> {
+    Err("negative input".into())
+}
+
+/// Lists the open tasks for `id`.
+fn tasks(id: u32) -> Result<(), String> {
+    Err("todos list".into())
+}
+
+/// Moves the mule for `id`.
+fn mule(id: u32) -> Result<(), String> {
+    Err("stubborn".into())
+}
+
+/// noop
+fn idle() {}
+
+/// Reports the first free slot.
+fn first_slot() -> Option<u32> {
+    Some(0)
+}
+
+/// Reports the window size as width and height.
+fn window() -> (u32, u32) {
+    (0, 0)
+}
+
+/// Reports the retry policy.
+fn retry_policy() -> u32 {
+    Default::default()
+}
+
+trait Lifecycle {
+    /// Releases every resource the plugin holds.
+    fn release(&self) {}
+}

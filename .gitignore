@@ -1,4 +1,5 @@
 /target
+/testdata/eval/target
 
 # The global gitignore excludes /.github/, which would silently drop the CI
 # workflow: it would exist on disk, never be committed, and never run on

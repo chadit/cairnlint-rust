@@ -1,0 +1,22 @@
+warning: `save_warned` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/crate_allow.rs:14:4
+   |
+LL | fn save_warned(id: u32) -> Result<(), String> {
+   |    ^^^^^^^^^^^
+   |
+note: the lint level is defined here
+  --> $DIR/crate_allow.rs:13:8
+   |
+LL | #[warn(agent_stub_body)]
+   |        ^^^^^^^^^^^^^^^
+
+warning: trait `Storer` has exactly one implementing type in this compilation (`FileStore`); using `FileStore` directly removes the trait and the indirection at its uses
+  --> $DIR/crate_allow.rs:18:7
+   |
+LL | trait Storer {
+   |       ^^^^^^
+   |
+   = note: `#[warn(agent_lone_impl)]` on by default
+
+warning: 2 warnings emitted
+

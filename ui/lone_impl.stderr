@@ -18,5 +18,17 @@ warning: trait `Clock` has exactly one implementing type in this compilation (`S
 LL | trait Clock {
    |       ^^^^^
 
-warning: 3 warnings emitted
+warning: trait `Tagged` has exactly one implementing type in this compilation (`Sms`); using `Sms` directly removes the trait and the indirection at its uses
+  --> $DIR/lone_impl.rs:169:7
+   |
+LL | trait Tagged {
+   |       ^^^^^^
+
+warning: trait `Expanded` has exactly one implementing type in this compilation (`Sms`); using `Sms` directly removes the trait and the indirection at its uses
+  --> $DIR/lone_impl.rs:179:7
+   |
+LL | trait Expanded {
+   |       ^^^^^^^^
+
+warning: 5 warnings emitted
 

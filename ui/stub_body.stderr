@@ -6,7 +6,7 @@ LL | fn validate_config(config: &str) -> Result<(), StoreError> {
    |
    = note: `#[warn(agent_stub_body)]` on by default
 
-warning: `load_user` returns a `"not implemented".to_string()` stub: wire up a real implementation before use
+warning: `load_user` returns a stub (`"not implemented".to_string()`): wire up a real implementation before use
   --> $DIR/stub_body.rs:22:4
    |
 LL | fn load_user(id: u32) -> Result<String, String> {
@@ -42,7 +42,7 @@ warning: `open` returns without doing the work its signature implies: a one-line
 LL | fn open(path: &str) -> Result<u32, StoreError> {
    |    ^^^^
 
-warning: `save` returns a `StoreError::NotImplemented` stub: wire up a real implementation before use
+warning: `save` returns a stub (`StoreError::NotImplemented`): wire up a real implementation before use
   --> $DIR/stub_body.rs:50:8
    |
 LL |     fn save(&self) -> Result<(), StoreError> {
@@ -78,13 +78,13 @@ warning: `status` returns a canned value; verify it does what its doc claims rat
 LL |     fn status(&self) -> Option<String> {
    |        ^^^^^^
 
-warning: `connect` returns a `io::Error::new(io::ErrorKind::Other, "not implemented")` stub: wire up a real implementation before use
+warning: `connect` returns a stub (`io::Error::new(io::ErrorKind::Other, "not implemented")`): wire up a real implementation before use
   --> $DIR/stub_body.rs:168:4
    |
 LL | fn connect(port: u16) -> io::Result<()> {
    |    ^^^^^^^
 
-warning: `send_report` returns a `format!("not implemented")` stub: wire up a real implementation before use
+warning: `send_report` returns a stub (`format!("not implemented")`): wire up a real implementation before use
   --> $DIR/stub_body.rs:173:4
    |
 LL | fn send_report(id: u32) -> Result<(), String> {
@@ -132,5 +132,95 @@ warning: the body of `multiline` is only `todo!()`: wire up a real implementatio
 LL | fn multiline() -> u32 {
    |    ^^^^^^^^^
 
-warning: 22 warnings emitted
+warning: `import` returns a stub (`"not_implemented".into()`): wire up a real implementation before use
+  --> $DIR/stub_body.rs:256:4
+   |
+LL | fn import(path: &str) -> Result<(), String> {
+   |    ^^^^^^
+
+warning: `save_draft` returns a stub (`"TODO: implement save".into()`): wire up a real implementation before use
+  --> $DIR/stub_body.rs:261:4
+   |
+LL | fn save_draft(id: u32) -> Result<(), String> {
+   |    ^^^^^^^^^^
+
+warning: `archive` returns a stub (`"to-do".into()`): wire up a real implementation before use
+  --> $DIR/stub_body.rs:266:4
+   |
+LL | fn archive(id: u32) -> Result<(), String> {
+   |    ^^^^^^^
+
+warning: `restore` returns a stub (`"FIXME".into()`): wire up a real implementation before use
+  --> $DIR/stub_body.rs:271:4
+   |
+LL | fn restore(id: u32) -> Result<(), String> {
+   |    ^^^^^^^
+
+warning: `sign` returns a stub (`"stub".into()`): wire up a real implementation before use
+  --> $DIR/stub_body.rs:276:4
+   |
+LL | fn sign(id: u32) -> Result<(), String> {
+   |    ^^^^
+
+warning: `preview` returns a stub (`"placeholder value".into()`): wire up a real implementation before use
+  --> $DIR/stub_body.rs:281:4
+   |
+LL | fn preview(id: u32) -> Result<String, String> {
+   |    ^^^^^^^
+
+warning: `compact` returns a stub (`"unimplemented".into()`): wire up a real implementation before use
+  --> $DIR/stub_body.rs:286:4
+   |
+LL | fn compact(id: u32) -> Result<(), String> {
+   |    ^^^^^^^
+
+warning: `sync` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:300:4
+   |
+LL | fn sync(id: u32) -> Result<(), SyncError> {
+   |    ^^^^
+
+warning: `reject` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:305:4
+   |
+LL | fn reject(value: i32) -> Result<(), String> {
+   |    ^^^^^^
+
+warning: `tasks` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:310:4
+   |
+LL | fn tasks(id: u32) -> Result<(), String> {
+   |    ^^^^^
+
+warning: `mule` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/stub_body.rs:315:4
+   |
+LL | fn mule(id: u32) -> Result<(), String> {
+   |    ^^^^
+
+warning: `first_slot` returns a canned value; verify it does what its doc claims rather than standing in as a stub
+  --> $DIR/stub_body.rs:323:4
+   |
+LL | fn first_slot() -> Option<u32> {
+   |    ^^^^^^^^^^
+
+warning: `window` returns a canned value; verify it does what its doc claims rather than standing in as a stub
+  --> $DIR/stub_body.rs:328:4
+   |
+LL | fn window() -> (u32, u32) {
+   |    ^^^^^^
+
+warning: `retry_policy` returns a canned value; verify it does what its doc claims rather than standing in as a stub
+  --> $DIR/stub_body.rs:333:4
+   |
+LL | fn retry_policy() -> u32 {
+   |    ^^^^^^^^^^^^
+
+warning: `release` has an empty body but its doc describes behavior: implement it or drop the claim
+  --> $DIR/stub_body.rs:339:8
+   |
+LL |     fn release(&self) {}
+   |        ^^^^^^^
+
+warning: 37 warnings emitted
 

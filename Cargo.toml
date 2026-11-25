@@ -13,6 +13,9 @@ clippy_utils = { git = "https://github.com/rust-lang/rust-clippy", rev = "2dd711
 dylint_linting = "=6.4.0"
 
 [dev-dependencies]
+# Already in the tree through dylint_testing; the eval in tests/eval.rs parses
+# cargo's JSON messages with it.
+cargo_metadata = "=0.23.1"
 dylint_testing = "=6.4.0"
 
 [workspace]

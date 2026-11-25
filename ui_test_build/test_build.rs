@@ -36,6 +36,49 @@ fn production() -> [String; 2] {
     [render("a", true), render("b", true)]
 }
 
+#[test]
+fn not_written_yet() {
+    todo!()
+}
+
+fn not_written_yet_twin() {
+    todo!()
+}
+
+// Copies of the helpers in tests/integration.rs and tests/suite/main.rs. This
+// root is outside a tests/ directory, so their warnings here show the lints
+// fire on those shapes, and the silence there comes from the integration-test
+// rule.
+
+/// Builds the fixture every integration test starts from.
+fn fixture(id: u32) -> Result<(), String> {
+    Ok(())
+}
+
+fn label(name: &str, strict: bool) -> String {
+    if strict {
+        name.to_uppercase()
+    } else {
+        name.to_owned()
+    }
+}
+
+struct Holder {
+    inner: Vec<u8>,
+}
+
+impl Holder {
+    fn len(&self) -> usize {
+        self.inner.len()
+    }
+}
+
+#[test]
+fn labels_twice() {
+    assert_eq!(label("a", true), "A");
+    assert_eq!(label("b", true), "B");
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

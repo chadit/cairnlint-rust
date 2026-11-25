@@ -36,5 +36,17 @@ warning: parameter `flag` of `place` receives `true` at all 2 call sites in this
 LL | fn place((x, y): (u32, u32), flag: bool) -> u32 {
    |                              ^^^^
 
-warning: 6 warnings emitted
+warning: parameter `dark` of `shade` receives `true` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param.rs:152:21
+   |
+LL | fn shade(level: u8, dark: bool) -> u8 {
+   |                     ^^^^
+
+warning: parameter `keep` of `wrap` receives `true` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/lone_param.rs:168:22
+   |
+LL | fn wrap<T>(value: T, keep: bool) -> Option<T> {
+   |                      ^^^^
+
+warning: 8 warnings emitted
 

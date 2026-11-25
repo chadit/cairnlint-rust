@@ -1,0 +1,52 @@
+warning: `save_twin` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/suppression.rs:14:4
+   |
+LL | fn save_twin(id: u32) -> Result<(), String> {
+   |    ^^^^^^^^^
+   |
+   = note: `#[warn(agent_stub_body)]` on by default
+
+warning: trait `StorerTwin` has exactly one implementing type in this compilation (`FileStore`); using `FileStore` directly removes the trait and the indirection at its uses
+  --> $DIR/suppression.rs:37:7
+   |
+LL | trait StorerTwin {
+   |       ^^^^^^^^^^
+   |
+   = note: `#[warn(agent_lone_impl)]` on by default
+
+warning: `store` returns without doing the work its signature implies: a one-line function that can fail but never acts is usually an unfinished stub
+  --> $DIR/suppression.rs:159:4
+   |
+LL | fn store(id: u32, strict: bool) -> Result<(), String> {
+   |    ^^^^^
+
+warning: type `WrapperTwin` wraps one field and its only method forwards; callers can hold the wrapped value directly
+  --> $DIR/suppression.rs:77:8
+   |
+LL | struct WrapperTwin {
+   |        ^^^^^^^^^^^
+   |
+   = note: `#[warn(agent_passthrough)]` on by default
+
+warning: method `MixedTwin::size` only forwards its arguments to `self.inner.size` and adds no behavior of its own
+  --> $DIR/suppression.rs:120:8
+   |
+LL |     fn size(&self, extra: usize) -> usize {
+   |        ^^^^
+
+warning: type `AllowedTwin` wraps one field and every one of its 2 methods forwards; callers can hold the wrapped value directly
+  --> $DIR/suppression.rs:202:8
+   |
+LL | struct AllowedTwin {
+   |        ^^^^^^^^^^^
+
+warning: parameter `strict` of `render_twin` receives `true` at all 2 call sites in this crate; the choice it encodes is never made
+  --> $DIR/suppression.rs:138:32
+   |
+LL | fn render_twin(template: &str, strict: bool) -> String {
+   |                                ^^^^^^
+   |
+   = note: `#[warn(agent_lone_param)]` on by default
+
+warning: 7 warnings emitted
+

@@ -154,7 +154,7 @@ fn sole_return_message<'tcx>(
 ) -> Option<String> {
     if let Some(text) = stub_sentinel(cx, returned) {
         return Some(format!(
-            "`{name}` returns a `{text}` stub: wire up a real implementation before use"
+            "`{name}` returns a stub (`{text}`): wire up a real implementation before use"
         ));
     }
     if !is_canned(cx, returned) {
@@ -368,52 +368,4 @@ fn mentions_noop(doc: &str) -> bool {
         &["noop"],
         &[("no", "op"), ("does", "nothing"), ("do", "nothing")],
     )
-}
-
-#[cfg(test)]
-mod tests {
-    use super::{mentions_noop, mentions_stub};
-
-    #[test]
-    fn stub_text_matches_every_spelling() {
-        for text in [
-            "\"not implemented\"",
-            "Error::NotImplemented",
-            "\"not_implemented\"",
-            "\"TODO: implement save\"",
-            "\"to-do\"",
-            "\"FIXME\"",
-            "\"stub\"",
-            "\"placeholder value\"",
-            "\"unimplemented\"",
-        ] {
-            assert!(mentions_stub(text), "expected a stub match for {text}");
-        }
-    }
-
-    #[test]
-    fn ordinary_error_text_is_not_a_stub() {
-        for text in [
-            "\"negative input\"",
-            "Error::Implemented",
-            "\"todos list\"",
-            "\"stubborn\"",
-        ] {
-            assert!(!mentions_stub(text), "unexpected stub match for {text}");
-        }
-    }
-
-    #[test]
-    fn noop_doc_matches_common_phrasings() {
-        assert!(mentions_noop("Called on shutdown. The default is a no-op."));
-        assert!(mentions_noop("Does nothing by default."));
-        assert!(mentions_noop("noop"));
-    }
-
-    #[test]
-    fn ordinary_doc_is_not_a_noop() {
-        assert!(!mentions_noop(
-            "Validates the input and reports the first problem."
-        ));
-    }
 }

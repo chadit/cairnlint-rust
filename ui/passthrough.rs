@@ -205,3 +205,117 @@ impl Nested {
 }
 
 fn main() {}
+
+impl Inner {
+    fn combine(&self, left: &str, right: &str) -> String {
+        format!("{left}{}{right}", self.sep)
+    }
+}
+
+struct Swapped {
+    inner: Inner,
+}
+
+impl Swapped {
+    fn combine(&self, left: &str, right: &str) -> String {
+        self.inner.combine(right, left)
+    }
+}
+
+struct Delegating {
+    inner: Inner,
+}
+
+impl Delegating {
+    fn sep(&self) -> &str {
+        self.label()
+    }
+
+    fn label(&self) -> &str {
+        &self.inner.sep
+    }
+}
+
+struct Stack<T> {
+    items: Vec<T>,
+}
+
+impl<T> Stack<T> {
+    fn len(&self) -> usize {
+        self.items.len()
+    }
+}
+
+struct Spelled {
+    inner: Inner,
+}
+
+impl Spelled {
+    fn join(&self, parts: &[String]) -> String {
+        Inner::join(&self.inner, parts)
+    }
+}
+
+struct SpelledMixed {
+    inner: Inner,
+    seen: Cell<u32>,
+}
+
+impl SpelledMixed {
+    fn combine(&self, left: &str, right: &str) -> String {
+        Inner::combine(&self.inner, left, right)
+    }
+
+    fn count(&self) -> u32 {
+        self.seen.set(self.seen.get() + 1);
+        self.seen.get()
+    }
+}
+
+fn join_with(inner: &Inner, parts: &[String]) -> String {
+    inner.join(parts)
+}
+
+struct Helped {
+    inner: Inner,
+}
+
+impl Helped {
+    fn join(&self, parts: &[String]) -> String {
+        join_with(&self.inner, parts)
+    }
+}
+
+struct SpelledSwapped {
+    inner: Inner,
+}
+
+impl SpelledSwapped {
+    fn combine(&self, left: &str, right: &str) -> String {
+        Inner::combine(&self.inner, right, left)
+    }
+}
+
+struct SpelledBoxed {
+    inner: Box<Inner>,
+}
+
+impl SpelledBoxed {
+    fn join(&self, parts: &[String]) -> String {
+        Inner::join(&*self.inner, parts)
+    }
+}
+
+fn fetch_inner() -> Box<Inner> {
+    Box::new(Inner { sep: String::new() })
+}
+
+struct Fetched {
+    inner: Box<Inner>,
+}
+
+impl Fetched {
+    fn join(&self, parts: &[String]) -> String {
+        Inner::join(&*fetch_inner(), parts)
+    }
+}

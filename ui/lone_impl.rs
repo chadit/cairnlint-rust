@@ -165,3 +165,29 @@ macro_rules! generated_trait {
 generated_trait!();
 
 fn main() {}
+
+trait Tagged {
+    const TAG: u8;
+}
+
+impl Tagged for Sms {
+    const TAG: u8 = 1;
+}
+
+// Only the trait is exempt when macro output declares it. An impl a macro
+// writes still counts as the trait's one implementation.
+trait Expanded {
+    fn expand(&self) -> u8;
+}
+
+macro_rules! impl_expanded {
+    ($ty:ty) => {
+        impl Expanded for $ty {
+            fn expand(&self) -> u8 {
+                1
+            }
+        }
+    };
+}
+
+impl_expanded!(Sms);

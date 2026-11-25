@@ -1,8 +1,10 @@
 //! `agent_passthrough` flags an inherent method whose body is one call that
 //! hands every parameter, unchanged and in order, to a method on one of
-//! `self`'s fields. When a single-field struct's inherent methods all forward,
-//! it reports once at the type instead: the newtype adds nothing callers could
-//! not get by holding the wrapped value. Fowler calls that shape a Middle Man.
+//! `self`'s fields, written either `self.inner.join(parts)` or
+//! `Inner::join(&self.inner, parts)`. When a single-field struct's inherent
+//! methods all forward, it reports once at the type instead: the newtype adds
+//! nothing callers could not get by holding the wrapped value. Fowler calls
+//! that shape a Middle Man.
 //!
 //! Not reported: trait impl methods, because a trait's contract and the orphan
 //! rule are the usual reasons a newtype forwards; associated functions without
@@ -19,8 +21,12 @@ use clippy_utils::diagnostics::span_lint_hir;
 use clippy_utils::res::MaybeResPath;
 use clippy_utils::source::snippet_opt;
 use rustc_data_structures::fx::FxIndexMap;
-use rustc_hir::{Body, Expr, ExprKind, HirId, ImplItem, ImplItemImplKind, ImplItemKind, Param};
+use rustc_hir::def::{DefKind, Res};
+use rustc_hir::{
+    Body, Expr, ExprKind, HirId, ImplItem, ImplItemImplKind, ImplItemKind, Param, UnOp,
+};
 use rustc_lint::{LateContext, LateLintPass, declare_lint, impl_lint_pass};
+use rustc_middle::ty::TypeckResults;
 use rustc_span::def_id::DefId;
 use rustc_span::{Span, Symbol};
 
@@ -88,7 +94,8 @@ impl<'tcx> LateLintPass<'tcx> for Passthrough {
         {
             return;
         }
-        let Some(target) = forward_target(cx, cx.tcx.hir_body(body_id)) else {
+        let typeck = cx.tcx.typeck_body(body_id);
+        let Some(target) = forward_target(cx, typeck, cx.tcx.hir_body(body_id)) else {
             return;
         };
         let forwarder = Forwarder {
@@ -180,23 +187,70 @@ fn report_wrapper(cx: &LateContext<'_>, type_id: DefId, total: usize) -> bool {
 /// Returns the rendered call target when the body is a single method call on a
 /// field of `self` that passes every other parameter through unchanged. A body
 /// that branches, reshapes an argument, or handles an error is doing work.
-fn forward_target(cx: &LateContext<'_>, body: &Body<'_>) -> Option<String> {
+fn forward_target<'tcx>(
+    cx: &LateContext<'tcx>,
+    typeck: &TypeckResults<'tcx>,
+    body: &Body<'_>,
+) -> Option<String> {
     let [self_param, params @ ..] = body.params else {
         return None;
     };
     let ExprKind::Block(block, _) = body.value.kind else {
         return None;
     };
-    let ExprKind::MethodCall(segment, receiver, args, _) = sole_expr(block)?.kind else {
-        return None;
-    };
+    let (receiver, method, args) = method_call_parts(cx, typeck, sole_expr(block)?)?;
     if !is_field_of(receiver, self_param.pat.hir_id) || !passes_params_through(args, params) {
         return None;
     }
     let mut target = snippet_opt(cx, receiver.span)?;
     target.push('.');
-    target.push_str(segment.ident.as_str());
+    target.push_str(method.as_str());
     Some(target)
+}
+
+/// Splits a method call into its receiver, the method's name, and the other
+/// arguments, so `self.inner.join(parts)` and `Inner::join(&self.inner, parts)`
+/// read the same. A path call counts only when its callee takes `self`.
+fn method_call_parts<'a>(
+    cx: &LateContext<'_>,
+    typeck: &TypeckResults<'_>,
+    expr: &'a Expr<'a>,
+) -> Option<(&'a Expr<'a>, Symbol, &'a [Expr<'a>])> {
+    match expr.kind {
+        ExprKind::MethodCall(segment, receiver, args, _) => {
+            Some((receiver, segment.ident.name, args))
+        }
+        ExprKind::Call(callee, [receiver, args @ ..]) => {
+            let ExprKind::Path(qpath) = &callee.kind else {
+                return None;
+            };
+            let Res::Def(DefKind::AssocFn, callee_id) = typeck.qpath_res(qpath, callee.hir_id)
+            else {
+                return None;
+            };
+            cx.tcx
+                .associated_item(callee_id)
+                .is_method()
+                .then(|| (peel_borrow(receiver), cx.tcx.item_name(callee_id), args))
+        }
+        _ => None,
+    }
+}
+
+/// A path call spells the receiver's autoref out, as in `&self.inner`, and
+/// the deref a method call would insert, as in `&*self.inner` on a `Box`.
+fn peel_borrow<'a>(expr: &'a Expr<'a>) -> &'a Expr<'a> {
+    match expr.kind {
+        ExprKind::AddrOf(_, _, inner) => peel_deref(inner),
+        _ => expr,
+    }
+}
+
+fn peel_deref<'a>(expr: &'a Expr<'a>) -> &'a Expr<'a> {
+    match expr.kind {
+        ExprKind::Unary(UnOp::Deref, inner) => inner,
+        _ => expr,
+    }
 }
 
 /// True for `self.a` or `self.a.b`, a chain of at least one field access that

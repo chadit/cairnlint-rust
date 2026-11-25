@@ -54,5 +54,29 @@ warning: method `Nested::join` only forwards its arguments to `self.outer.inner.
 LL |     fn join(&self, parts: &[String]) -> String {
    |        ^^^^
 
-warning: 9 warnings emitted
+warning: type `Stack` wraps one field and its only method forwards; callers can hold the wrapped value directly
+  --> $DIR/passthrough.rs:239:8
+   |
+LL | struct Stack<T> {
+   |        ^^^^^
+
+warning: type `Spelled` wraps one field and its only method forwards; callers can hold the wrapped value directly
+  --> $DIR/passthrough.rs:249:8
+   |
+LL | struct Spelled {
+   |        ^^^^^^^
+
+warning: method `SpelledMixed::combine` only forwards its arguments to `self.inner.combine` and adds no behavior of its own
+  --> $DIR/passthrough.rs:265:8
+   |
+LL |     fn combine(&self, left: &str, right: &str) -> String {
+   |        ^^^^^^^
+
+warning: type `SpelledBoxed` wraps one field and its only method forwards; callers can hold the wrapped value directly
+  --> $DIR/passthrough.rs:299:8
+   |
+LL | struct SpelledBoxed {
+   |        ^^^^^^^^^^^^
+
+warning: 13 warnings emitted
 

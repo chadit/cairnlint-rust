@@ -148,3 +148,27 @@ fn place((x, y): (u32, u32), flag: bool) -> u32 {
 fn call_place() -> [u32; 2] {
     [place((1, 2), true), place((1, 2), true)]
 }
+
+fn shade(level: u8, dark: bool) -> u8 {
+    if dark { level / 2 } else { level }
+}
+
+fn call_shade() -> Vec<u8> {
+    vec![shade(1, true), shade(2, true)]
+}
+
+fn pad(text: &str, width: usize) -> String {
+    format!("{text:width$}")
+}
+
+fn call_pad(width: usize) -> [String; 2] {
+    [pad("a", 4), pad("b", width)]
+}
+
+fn wrap<T>(value: T, keep: bool) -> Option<T> {
+    keep.then_some(value)
+}
+
+fn call_wrap() -> [Option<u8>; 2] {
+    [wrap(1, true), wrap(2, true)]
+}
